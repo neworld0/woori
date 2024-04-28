@@ -9,7 +9,6 @@ from ..models import Question
 
 
 # 게시판 목록 출력
-@login_required(login_url='common:login')
 def question(request):
     page = request.GET.get('page', '1')  # 페이지
     question_list = Question.objects.order_by('-create_date')
@@ -19,8 +18,12 @@ def question(request):
     return render(request, 'wl/question_list.html', context)
 
 
+def detail(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    context = {'question': question}
+    return render(request, 'wl/question_detail.html', context)
 
-@login_required(login_url='common:login')
+
 def question_create(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST)
@@ -36,7 +39,6 @@ def question_create(request):
     return render(request, 'wl/question_form.html', context)
 
 
-@login_required(login_url='common:login')
 def question_modify(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     if request.user != question.author:
@@ -55,7 +57,6 @@ def question_modify(request, question_id):
     return render(request, 'wl/question_form.html', context)
 
 
-@login_required(login_url='common:login')
 def question_delete(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     if request.user != question.author:
